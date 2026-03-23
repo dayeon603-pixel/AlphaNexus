@@ -1,10 +1,10 @@
-# 📊 Alpha Engine v2 — Quantitative Trading & Analysis Terminal
+# Alpha Engine v2 — Quantitative Trading & Analysis Terminal
 
 > A full-stack quantitative finance platform integrating **GARCH volatility modeling, Hidden Markov Regime Detection, Monte Carlo simulation, and multi-factor alpha signals** into a real-time analytical dashboard.
 
 ---
 
-## 🚀 Overview
+##Overview
 
 **Alpha Engine v2** is an advanced quant terminal that replicates institutional-grade trading analytics in a single interactive interface.
 
