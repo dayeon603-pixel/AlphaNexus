@@ -4,7 +4,7 @@
 
 ---
 
-##Overview
+Overview
 
 **Alpha Engine v2** is an advanced quant terminal that replicates institutional-grade trading analytics in a single interactive interface.
 
