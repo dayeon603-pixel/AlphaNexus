@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "Alpha Nexus — Quant Signal Overlay",
+  "version": "1.0.0",
+  "description": "GJR-GARCH + HMM + TSMOM signal overlay for Yahoo Finance, MarketWatch, and Google Finance. Shows multi-timeframe directional predictions with confidence intervals.",
+
+  "permissions": ["storage", "alarms"],
+  "host_permissions": [
+    "https://query1.finance.yahoo.com/*",
+    "https://query2.finance.yahoo.com/*",
+    "https://finance.yahoo.com/*",
+    "https://www.marketwatch.com/*",
+    "https://www.google.com/finance/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://finance.yahoo.com/quote/*",
+        "https://www.marketwatch.com/investing/stock/*",
+        "https://www.marketwatch.com/investing/fund/*",
+        "https://www.google.com/finance/quote/*"
+      ],
+      "js": ["widget.js"],
+      "css": ["widget.css"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Alpha Nexus",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["widget.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

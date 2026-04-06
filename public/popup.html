@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AlphaNexus</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 280px;
+      background: #04090f;
+      color: #c8d8e8;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px 9px;
+      background: #060e1a;
+      border-bottom: 1px solid #0c1824;
+    }
+
+    .logo {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #4a9aff;
+    }
+
+    .version {
+      font-size: 9px;
+      color: #2a4560;
+    }
+
+    /* Status section */
+    .section {
+      padding: 10px 12px;
+      border-bottom: 1px solid #0c1824;
+    }
+
+    .section-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #2a4560;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    /* Status indicator */
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #2a4560;
+      flex-shrink: 0;
+    }
+
+    .status-dot.active  { background: #00e8a2; box-shadow: 0 0 6px #00e8a244; }
+    .status-dot.loading { background: #f0c040; animation: pulse 1.2s ease-in-out infinite; }
+    .status-dot.error   { background: #ff4060; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50%       { opacity: 1;   }
+    }
+
+    .status-text {
+      color: #4a7090;
+      font-size: 10px;
+    }
+
+    /* Ticker display */
+    .ticker-display {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .ticker-sym {
+      font-size: 14px;
+      font-weight: 700;
+      color: #c8d8e8;
+    }
+
+    .ticker-price {
+      font-size: 13px;
+      color: #4a9aff;
+    }
+
+    .ticker-none {
+      font-size: 10px;
+      color: #2a4560;
+      font-style: italic;
+    }
+
+    /* Supported sites */
+    .sites-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .site-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      color: #4a7090;
+    }
+
+    .site-check {
+      font-size: 9px;
+      color: #00e8a2;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 10px 12px;
+      border-bottom: 1px solid #0c1824;
+    }
+
+    .btn {
+      all: unset;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 7px 10px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-align: center;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn-primary {
+      background: #0a2040;
+      color: #4a9aff;
+      border: 1px solid #0a6aff44;
+    }
+
+    .btn-primary:hover {
+      background: #0a3060;
+      color: #6ab0ff;
+    }
+
+    .btn-secondary {
+      background: #060e1a;
+      color: #4a7090;
+      border: 1px solid #0c1824;
+    }
+
+    .btn-secondary:hover {
+      background: #0c1824;
+      color: #c8d8e8;
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Settings toggle */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+
+    .toggle-label {
+      font-size: 10px;
+      color: #4a7090;
+    }
+
+    .toggle {
+      position: relative;
+      width: 28px;
+      height: 14px;
+    }
+
+    .toggle input { display: none; }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: #0c1824;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle input:checked + .toggle-track {
+      background: #0a6aff55;
+    }
+
+    .toggle-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #2a4560;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .toggle input:checked ~ .toggle-thumb {
+      transform: translateX(14px);
+      background: #4a9aff;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-note {
+      font-size: 8px;
+      color: #2a4560;
+    }
+
+    .footer-link {
+      font-size: 8px;
+      color: #2a4560;
+      text-decoration: none;
+    }
+
+    .footer-link:hover {
+      color: #4a7090;
+    }
+
+    /* Cache info */
+    .cache-info {
+      font-size: 9px;
+      color: #2a4560;
+      margin-top: 3px;
+    }
+
+    .cache-info span {
+      color: #4a7090;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="logo">◈ ALPHA NEXUS</span>
+    <span class="version" id="ext-version">v1.0.0</span>
+  </div>
+
+  <!-- Current page status -->
+  <div class="section">
+    <div class="section-label">Current Page</div>
+    <div id="ticker-section">
+      <div class="ticker-none">Navigate to a supported stock page</div>
+    </div>
+    <div class="cache-info" id="cache-info"></div>
+  </div>
+
+  <!-- Extension status -->
+  <div class="section">
+    <div class="section-label">Widget Status</div>
+    <div class="status-row">
+      <div class="status-dot" id="status-dot"></div>
+      <span class="status-text" id="status-text">Checking…</span>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn btn-primary" id="btn-refresh" disabled>↺ Refresh Analysis</button>
+    <button class="btn btn-secondary" id="btn-show">Show Widget</button>
+    <div class="toggle-row">
+      <span class="toggle-label">Auto-analyse on navigation</span>
+      <label class="toggle">
+        <input type="checkbox" id="toggle-auto" checked />
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Supported sites -->
+  <div class="section">
+    <div class="section-label">Supported Sites</div>
+    <div class="sites-list">
+      <div class="site-row"><span class="site-check">✓</span> finance.yahoo.com</div>
+      <div class="site-row"><span class="site-check">✓</span> marketwatch.com</div>
+      <div class="site-row"><span class="site-check">✓</span> google.com/finance</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="footer-note">GJR-GARCH · HMM · TSMOM · IC-Ensemble</span>
+    <a class="footer-link" href="https://github.com/dayeon603-pixel/AlphaNexus" target="_blank" rel="noopener">GitHub</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

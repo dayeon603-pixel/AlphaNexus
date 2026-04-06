@@ -1,0 +1,266 @@
+/**
+ * AlphaNexus overlay widget — styles.
+ *
+ * Design language: dark terminal / Bloomberg-inspired.
+ * No external fonts or assets — fully self-contained.
+ * Uses CSS custom properties so the host page cannot bleed in.
+ */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Root container — injected as #alpha-nexus-root
+   All rules are prefixed `.an-*` to avoid conflicts with host page styles.
+───────────────────────────────────────────────────────────────────────────── */
+#alpha-nexus-root {
+  all: initial;
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 2147483647; /* max z-index */
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #c8d8e8;
+  pointer-events: none; /* let children opt-in */
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Widget shell
+───────────────────────────────────────────────────────────────────────────── */
+.an-widget {
+  pointer-events: all;
+  background: #04090f;
+  border: 1px solid #0c1824;
+  border-radius: 6px;
+  width: 320px;
+  box-shadow:
+    0 0 0 1px #0a6aff22,
+    0 8px 32px #000a,
+    0 2px 8px #0006;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Header
+───────────────────────────────────────────────────────────────────────────── */
+.an-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px 6px;
+  background: #060e1a;
+  border-bottom: 1px solid #0c1824;
+}
+
+.an-logo {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #4a9aff;
+  text-transform: uppercase;
+}
+
+.an-header-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.an-btn {
+  all: unset;
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #2a4560;
+  transition: color 0.15s, background 0.15s;
+}
+
+.an-btn:hover {
+  color: #c8d8e8;
+  background: #0c1824;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Body
+───────────────────────────────────────────────────────────────────────────── */
+.an-body {
+  padding: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Ticker row
+───────────────────────────────────────────────────────────────────────────── */
+.an-ticker-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 10px 6px;
+  border-bottom: 1px solid #0c1824;
+}
+
+.an-ticker {
+  font-size: 13px;
+  font-weight: 700;
+  color: #c8d8e8;
+  letter-spacing: 0.5px;
+}
+
+.an-price {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a9aff;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Forecast table
+───────────────────────────────────────────────────────────────────────────── */
+.an-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.an-thead th {
+  padding: 5px 6px 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #2a4560;
+  text-align: left;
+  border-bottom: 1px solid #0c1824;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.an-thead th:nth-child(1) { width: 22%; }
+.an-thead th:nth-child(2) { width: 28%; }
+.an-thead th:nth-child(3) { width: 16%; }
+.an-thead th:nth-child(4) { width: 16%; }
+.an-thead th:nth-child(5) { width: 18%; }
+
+.an-row {
+  border-bottom: 1px solid #070d17;
+}
+
+.an-row:last-child {
+  border-bottom: none;
+}
+
+.an-row td {
+  padding: 5px 6px;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.an-tf {
+  color: #4a7090;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+.an-ci {
+  color: #4a7090;
+  font-size: 10px;
+}
+
+.an-conf {
+  font-size: 10px;
+  color: #4a7090;
+  margin-left: 2px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Metrics chips
+───────────────────────────────────────────────────────────────────────────── */
+.an-metrics-row {
+  display: flex;
+  gap: 1px;
+  padding: 1px 0;
+  border-top: 1px solid #0c1824;
+}
+
+.an-chip {
+  flex: 1;
+  padding: 5px 6px;
+  background: #060e1a;
+  text-align: center;
+  min-width: 0;
+}
+
+.an-chip + .an-chip {
+  border-left: 1px solid #0c1824;
+}
+
+.an-chip-label {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: #2a4560;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.an-chip-val {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.an-chip-sub {
+  font-size: 8px;
+  color: #2a4560;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Footer
+───────────────────────────────────────────────────────────────────────────── */
+.an-footer {
+  padding: 5px 10px 6px;
+  font-size: 8px;
+  color: #2a4560;
+  border-top: 1px solid #0c1824;
+  letter-spacing: 0.3px;
+  text-align: center;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Loading state
+───────────────────────────────────────────────────────────────────────────── */
+.an-loading {
+  padding: 20px 10px;
+  text-align: center;
+}
+
+.an-pulse {
+  font-size: 10px;
+  color: #4a7090;
+  animation: an-fade 1.4s ease-in-out infinite;
+}
+
+@keyframes an-fade {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1;   }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Error state
+───────────────────────────────────────────────────────────────────────────── */
+.an-error {
+  padding: 16px 10px;
+  text-align: center;
+  font-size: 10px;
+  color: #ff4060;
+}
