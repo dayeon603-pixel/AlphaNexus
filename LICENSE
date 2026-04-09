@@ -1,21 +1,203 @@
-MIT License
+AlphaNexus Proprietary Systems License
 
-Copyright (c) 2026 Dayeon Kang
+Version 1.0 
+Copyright (c) [2026] Dayeon Kang. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+---
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Definitions
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+1.1 “Licensor” means Dayeon Kang, creator and owner of AlphaNexus.
+
+1.2 “AlphaNexus System” includes all system architectures, pipelines, trading logic, modeling strategies, algorithms, signals, evaluation frameworks, infrastructure design, and computational workflows.
+
+1.3 “Work” includes all code, models, datasets, signals, strategies, backtests, documentation, dashboards, interfaces, and any related materials.
+
+1.4 “User” means any individual or entity accessing or interacting with the Work.
+
+1.5 “Derivative System” means any system, model, pipeline, or strategy that is:
+(a) based on the Work
+(b) structurally similar
+(c) functionally equivalent
+(d) influenced by exposure to the Work
+
+1.6 “Financial Use” means any use involving:
+
+* trading (manual or automated)
+* investment decisions
+* portfolio management
+* signal generation
+* market analysis
+* internal quant strategy development
+
+---
+
+2. Nature of License
+
+2.1 This Work is NOT open source.
+
+2.2 The Work is provided strictly for:
+
+* viewing
+* inspection
+* limited conceptual understanding
+
+2.3 No rights to use, implement, or reproduce are granted.
+
+---
+
+3. Limited Permission
+
+3.1 The User may:
+
+* view the Work
+* read the Work
+* privately study the Work
+
+3.2 This permission is:
+
+* non-commercial
+* non-operational
+* non-financial
+
+---
+
+4. Absolute Restrictions
+
+The User SHALL NOT:
+
+4.1 Copy, reproduce, redistribute, or store the Work;
+
+4.2 Implement or deploy ANY part of AlphaNexus;
+
+4.3 Use ANY signals, outputs, or strategies derived from the Work;
+
+4.4 Use the Work for ANY Financial Use;
+
+4.5 Use the Work to build:
+
+* trading systems
+* AI models
+* quant strategies
+* financial pipelines
+
+4.6 Extract or replicate:
+
+* features
+* signals
+* modeling approaches
+* system structures
+
+4.7 Use the Work to gain ANY competitive advantage in markets;
+
+4.8 Develop ANY Derivative System;
+
+4.9 Reverse engineer system logic or architecture;
+
+4.10 Share insights, summaries, or extracted ideas;
+
+4.11 Use the Work in ANY organization, institution, or company.
+
+---
+
+5. Anti-Extraction Clause
+
+5.1 Any knowledge gained from viewing the Work is considered protected.
+
+5.2 The User SHALL NOT:
+
+* reconstruct strategies
+* recreate signals
+* rebuild system pipelines
+* apply learned structures
+
+5.3 ANY similar system created after exposure is presumed derived.
+
+---
+
+6. Financial Protection Clause (Critical)
+
+6.1 ANY use of the Work or its concepts in financial markets is strictly prohibited.
+
+6.2 This includes:
+
+* trading
+* signal generation
+* alpha extraction
+* risk modeling
+
+6.3 ANY profit derived from violation constitutes unlawful gain.
+
+---
+
+7. AI and Model Restrictions
+
+7.1 The Work may NOT be used to:
+
+* train models
+* evaluate models
+* benchmark systems
+* improve algorithms
+
+7.2 The Work may NOT be used as:
+
+* dataset
+* feature source
+* strategy input
+
+---
+
+8. Ownership
+
+8.1 All rights remain exclusively with the Licensor.
+
+8.2 No implied rights exist.
+
+---
+
+9. Enforcement and Damages
+
+9.1 Any violation constitutes:
+
+* copyright infringement
+* trade secret misuse
+* unjust enrichment
+
+9.2 Liquidated damages:
+Minimum USD $250,000 OR 3x financial gain, whichever is greater.
+
+9.3 Licensor may pursue:
+
+* immediate injunction
+* asset recovery
+* legal damages
+
+---
+
+10. Termination
+
+10.1 License terminates immediately upon violation.
+
+---
+
+11. Disclaimer
+
+11.1 Provided “as is”.
+
+---
+
+12. Governing Law
+
+12.1 Governed by laws of the Republic of Korea.
+
+12.2 Enforcement may occur globally.
+
+---
+
+13. Entire Agreement
+
+13.1 This License governs all use of AlphaNexus.
+
+---
+
+BY ACCESSING OR USING THIS WORK, THE USER AGREES TO BE BOUND BY THIS LICENSE.
