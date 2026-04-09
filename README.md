@@ -4,7 +4,9 @@
 
 This repository contains the public-safe architecture, interface definitions, dashboard components, and demonstration modules for AlphaNexus.
 
-Certain proprietary components, including signal generation, model logic, execution systems, and risk allocation logic, are intentionally excluded or replaced with mock implementations.
+**Proprietary components** — including signal calibration, IC-weighted ensemble construction, MLE parameter estimation, confidence mapping, and position sizing logic — **are intentionally excluded or replaced with mock implementations**. The widget will display structurally valid output using standard academic defaults, but does not contain the real predictive engine.
+
+Standard academic algorithms (RSI, ATR, GARCH term structure, transition matrix multiplication) are included in full as they are well-known published methods.
 
 ---
 
