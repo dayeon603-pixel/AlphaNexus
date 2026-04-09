@@ -1,6 +1,9 @@
 # AlphaNexus — Quant Signal Overlay
 
 > A Chrome browser extension that injects a floating quantitative analysis overlay into Yahoo Finance, MarketWatch, and Google Finance. Shows multi-timeframe directional predictions, confidence intervals, regime state, and risk metrics — computed from real market data using professional-grade quant models.
+>This repository contains the public-safe architecture, interface definitions, dashboard components, and demonstration modules for AlphaNexus.
+
+Certain proprietary components, including signal generation, model logic, execution systems, and risk allocation logic, are intentionally excluded or replaced with mock implementations.
 
 ---
 
