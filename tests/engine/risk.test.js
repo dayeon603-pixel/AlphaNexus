@@ -14,7 +14,10 @@ describe('computeRiskMetrics — null cases', () => {
 });
 
 describe('computeRiskMetrics — uptrend', () => {
-  const prices = Array.from({ length: 101 }, (_, i) => 100 * Math.exp(0.0005 * i));
+  // Alternating log-returns (0.0003, 0.0008): strictly increasing so mdd=0,
+  // all returns positive so winRate=1, and non-constant so annVol > 0.
+  const prices = Array.from({ length: 101 }, (_, i) =>
+    100 * Math.exp(Math.floor(i / 2) * 0.0011 + (i % 2 === 0 ? 0 : 0.0003)));
   const returns = logReturns(prices);
   const m = computeRiskMetrics(returns, prices);
 
