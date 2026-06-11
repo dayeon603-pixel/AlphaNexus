@@ -1,4 +1,4 @@
-"""IPScope — IP portfolio risk-screening tool."""
+"""AlphaNexus — IP portfolio risk-screening tool."""
 
 __version__ = "0.1.0"
 

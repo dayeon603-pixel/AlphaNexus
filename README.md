@@ -1,4 +1,4 @@
-# IPScope — IP Portfolio Risk Screening Tool
+# AlphaNexus — IP Portfolio Risk Screening Tool
 
 MVP for patent and trademark portfolio risk screening. Accepts an applicant name,
 runs four independent risk modules, and returns a traffic-light grade (HIGH / MED / LOW)

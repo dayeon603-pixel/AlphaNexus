@@ -1,5 +1,5 @@
 """
-Scoring spine for IPScope.
+Scoring spine for AlphaNexus.
 
 Methodology: Ported from AlphaNexus quant engine — logistic signal saturation,
 normalized ensemble weighting, Herfindahl concentration penalty, and seeded

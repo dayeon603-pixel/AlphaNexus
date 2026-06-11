@@ -1,1 +1,1 @@
-"""IPScope test suite."""
+"""AlphaNexus test suite."""

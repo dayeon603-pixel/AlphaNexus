@@ -29,7 +29,7 @@ class TestInfoEndpoint:
 
     def test_info_has_name(self) -> None:
         data = _client.get("/info").json()
-        assert data["name"] == "IPScope"
+        assert data["name"] == "AlphaNexus"
 
     def test_info_has_modules(self) -> None:
         data = _client.get("/info").json()

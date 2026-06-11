@@ -1,5 +1,5 @@
 """
-Core analysis pipeline for IPScope.
+Core analysis pipeline for AlphaNexus.
 
 Separates pipeline logic from HTTP transport so it can be called
 directly from tests, CLI scripts, and the API layer.
@@ -34,7 +34,7 @@ GRADE_THRESHOLDS: dict[str, float] = {
 }
 
 APP_VERSION: str = "0.1.0"
-APP_NAME: str = "IPScope"
+APP_NAME: str = "AlphaNexus"
 
 
 def grade_portfolio(score: float) -> str:
@@ -129,7 +129,7 @@ def analyze_trademark(trademark: dict[str, Any]) -> dict[str, Any]:
 
 def run_pipeline(applicant_data: dict[str, Any]) -> dict[str, Any]:
     """
-    Run the full IPScope pipeline for one applicant.
+    Run the full AlphaNexus pipeline for one applicant.
 
     Args:
         applicant_data: ApplicantFixture dict with 'name', 'patents', 'trademarks'.

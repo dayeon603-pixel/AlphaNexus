@@ -1,5 +1,5 @@
 """
-SQLite-backed analysis cache for IPScope.
+SQLite-backed analysis cache for AlphaNexus.
 
 Cache key: applicant name (lowercased, stripped).
 TTL: 7 days.

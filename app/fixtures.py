@@ -1,5 +1,5 @@
 """
-Mock fixtures for IPScope.
+Mock fixtures for AlphaNexus.
 
 Six applicant profiles with 1–4 patents/trademarks each.
 Demo applicant: "삼정테크 (주)" — designed to score ≈ 37.9 / 100 (LOW).

@@ -1,5 +1,5 @@
 """
-Four IP risk modules for IPScope.
+Four IP risk modules for AlphaNexus.
 
 Each module takes a patent/trademark record dict and returns:
     {

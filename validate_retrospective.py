@@ -1,5 +1,5 @@
 """
-Retrospective validation harness for IPScope invalidation module.
+Retrospective validation harness for AlphaNexus invalidation module.
 
 Uses VALIDATION_SET (~30 labeled rows) from app/fixtures.py.
 All inputs use pre-trial signals only (trial_history=None throughout).
@@ -121,7 +121,7 @@ def compute_precision_recall_f1(
 def main() -> None:
     """Run retrospective validation and print results to stdout."""
     print("=" * 60)
-    print("IPScope — Retrospective Invalidation Module Validation")
+    print("AlphaNexus — Retrospective Invalidation Module Validation")
     print("=" * 60)
     print(f"Validation set size: {len(VALIDATION_SET)} records")
 

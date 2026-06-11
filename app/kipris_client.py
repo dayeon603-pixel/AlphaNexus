@@ -236,7 +236,7 @@ class KiprisClient:
     @staticmethod
     def _normalize_patent(raw: dict[str, Any]) -> dict[str, Any]:
         """
-        Map raw KIPRIS patent fields to IPScope internal schema.
+        Map raw KIPRIS patent fields to AlphaNexus internal schema.
 
         Fields not available from KIPRIS are set to None; modules impute.
         """
@@ -259,7 +259,7 @@ class KiprisClient:
 
     @staticmethod
     def _normalize_trademark(raw: dict[str, Any]) -> dict[str, Any]:
-        """Map raw KIPRIS trademark fields to IPScope internal schema."""
+        """Map raw KIPRIS trademark fields to AlphaNexus internal schema."""
         return {
             "id": raw.get("applicationNumber"),
             "title": raw.get("titleName"),

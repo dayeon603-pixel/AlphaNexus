@@ -1,5 +1,5 @@
 """
-IPScope FastAPI application.
+AlphaNexus FastAPI application.
 
 Endpoints:
     GET  /         → HTML input form
@@ -70,10 +70,10 @@ button:hover{background:#16213e}
 
 _FORM_HTML = """<!DOCTYPE html>
 <html lang="ko">
-<head><meta charset="UTF-8"><title>IPScope — IP 포트폴리오 리스크 스크리닝</title>
+<head><meta charset="UTF-8"><title>AlphaNexus — IP 포트폴리오 리스크 스크리닝</title>
 <style>{css}</style></head>
 <body>
-<h1>IPScope</h1>
+<h1>AlphaNexus</h1>
 <p class="subtitle">IP 포트폴리오 리스크 스크리닝 | Patent & Trademark Risk Analyzer</p>
 <div class="form-card">
   <h2 style="margin-top:0">출원인 분석</h2>
@@ -86,7 +86,7 @@ _FORM_HTML = """<!DOCTYPE html>
   </p>
 </div>
 <div class="disclaimer">
-  IPScope MVP — mock KIPRIS data. Set <code>KIPRIS_SERVICE_KEY</code> env var for live data.
+  AlphaNexus MVP — mock KIPRIS data. Set <code>KIPRIS_SERVICE_KEY</code> env var for live data.
   Scores are probabilistic estimates, not legal advice.
 </div>
 </body></html>"""
@@ -183,10 +183,10 @@ def _render_report(result: dict[str, Any]) -> str:
 
     return f"""<!DOCTYPE html>
 <html lang="ko">
-<head><meta charset="UTF-8"><title>IPScope 분석 결과 — {applicant}</title>
+<head><meta charset="UTF-8"><title>AlphaNexus 분석 결과 — {applicant}</title>
 <style>{_CSS}</style></head>
 <body>
-<h1>IPScope 분석 결과</h1>
+<h1>AlphaNexus 분석 결과</h1>
 <p class="subtitle">출원인: <strong>{applicant}</strong></p>
 
 <div class="card">
@@ -235,7 +235,7 @@ def _render_report(result: dict[str, Any]) -> str:
 </div>
 
 <div class="disclaimer">
-  IPScope MVP · 데이터 출처: {DATA_SOURCE} · v{result['app_version']} ·
+  AlphaNexus MVP · 데이터 출처: {DATA_SOURCE} · v{result['app_version']} ·
   이 분석은 확률적 추정치이며 법률 자문이 아닙니다. 중요 사안은 IP 전문가에게 문의하세요.
   <br><a href="/" style="color:#0f3460">← 새 분석 시작</a>
 </div>
@@ -257,7 +257,7 @@ async def analyze(
     applicant_name: Annotated[str, Form()],
 ) -> HTMLResponse:
     """
-    Run the full IPScope pipeline for the submitted applicant name.
+    Run the full AlphaNexus pipeline for the submitted applicant name.
 
     Checks the SQLite cache first; calls KIPRIS (mock or live) on miss.
     Returns an HTML traffic-light report.
