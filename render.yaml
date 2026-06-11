@@ -1,10 +1,14 @@
 services:
   - type: web
     name: ipscope
-    env: python
+    runtime: python
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: KIPRIS_SERVICE_KEY
-        sync: false   # inject via Render dashboard — never commit key
+    healthCheckPath: /health
     autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: KIPRIS_SERVICE_KEY
+        sync: false
