@@ -1,201 +1,145 @@
-# AlphaNexus — Quant Signal Overlay
+# IPScope — IP Portfolio Risk Screening Tool
 
-> A Chrome browser extension that injects a floating quantitative analysis overlay into Yahoo Finance, MarketWatch, and Google Finance. Shows multi-timeframe directional predictions, confidence intervals, regime state, and risk metrics — computed from real market data using professional-grade quant models.
-
-This repository contains the public-safe architecture, interface definitions, dashboard components, and demonstration modules for AlphaNexus.
-
-**Proprietary components** — including signal calibration, IC-weighted ensemble construction, MLE parameter estimation, confidence mapping, and position sizing logic — **are intentionally excluded or replaced with mock implementations**. The widget will display structurally valid output using standard academic defaults, but does not contain the real predictive engine.
-
-Standard academic algorithms (RSI, ATR, GARCH term structure, transition matrix multiplication) are included in full as they are well-known published methods.
+MVP for patent and trademark portfolio risk screening. Accepts an applicant name,
+runs four independent risk modules, and returns a traffic-light grade (HIGH / MED / LOW)
+with a 0–100 portfolio score and an HTML report.
 
 ---
 
-## What It Does
+## Methodology: AlphaNexus Quant Engine Port
 
-AlphaNexus detects the ticker on the current page and runs a full quant pipeline in the background. Results appear as a draggable overlay widget:
+The scoring spine is ported directly from a quant trading risk engine:
 
-```
-┌─────────────────────────────────────────┐
-│ ◈ ALPHA NEXUS              [↺] [−] [×] │
-│ AAPL · $213.24                          │
-├─────────────────────────────────────────┤
-│ TIMEFRAME  SIGNAL   MOVE    CI 68%  CONF│
-│ 1 MIN      ↑ BUY   +0.08%  ±0.3%   65%│
-│ 1 HOUR     ↑ BUY   +0.31%  ±1.1%   68%│
-│ 1 DAY      ↑ BUY   +0.52%  ±2.4%   61%│
-│ 1 WEEK     → HOLD  +0.84%  ±5.2%   54%│
-│ 1 MONTH    ↑ BUY   +3.10%  ±11%    60%│
-├─────────────────────────────────────────┤
-│ REGIME: BULL 74%  │ RSI: 58  │ ATR: 1.2%│
-│ GARCH VOL: 21.4%  │ Leverage: 1.31×     │
-│ Sharpe: 1.24      │ Max DD: −18.2%      │
-└─────────────────────────────────────────┘
-```
-
-All data is fetched from the Yahoo Finance v8 Chart API. All computation runs in the extension's background service worker — no external servers, no data collection.
+- **`saturate(x, k)`** — logistic sigmoid maps raw signals to [0, 100]. Same mathematical
+  structure as a logistic regression output layer.
+- **`weighted_ensemble`** — normalized weighted sum across modules, identical to a factor
+  model combining alpha signals.
+- **`concentration_adjust`** — Herfindahl-Hirschman Index penalty. A portfolio dominated by
+  one high-risk patent scores worse than the naive mean, mirroring concentration risk in
+  portfolio management.
+- **`bootstrap_ci`** — seeded Monte Carlo CI. Reliability tiers (a/b/c) map to signal sigma,
+  directly analogous to factor uncertainty scoring in quant research.
 
 ---
 
-## Quant Models
+## Four Risk Modules
 
-### GJR-GARCH(1,1) — Volatility
-
-Captures asymmetric volatility (leverage effect): negative shocks increase volatility more than positive shocks of equal magnitude.
-
-$$h_t = \omega + \alpha \varepsilon_{t-1}^2 + \gamma \varepsilon_{t-1}^2 \mathbf{1}[\varepsilon_{t-1} < 0] + \beta h_{t-1}$$
-
-Fitted via MLE using the Adam optimiser with analytical score functions (gradient of Gaussian log-likelihood via recursive derivative equations). No coordinate search heuristics.
-
-**Term structure** for multi-horizon variance (Engle & Bollerslev 1986):
-
-$$\mathbb{E}[h_{t+k}] = \sigma^2_{LR} + \varphi^k (h_t - \sigma^2_{LR}), \quad \varphi = \alpha + \beta + \gamma/2$$
-
-Cumulative variance for horizon $H$ is computed in closed form — no simulation required.
-
-### HMM — Regime Detection
-
-Two-state Hidden Markov Model (Bull / Bear) fitted via Baum-Welch EM on daily log returns.
-
-Initialisation uses variance-sorting: the bottom 60% of observations by absolute return are assigned to the Bull state (low-volatility regime). This is economically justified — bull markets exhibit lower volatility than bear markets — and produces more stable EM convergence than arbitrary index splitting.
-
-Regime probability is propagated forward using the transition matrix to give regime forecasts at each horizon.
-
-### Signals — TSMOM, OU, VWAP
-
-Three orthogonal signal sources combined via IC-weighting:
-
-**Time-Series Momentum (TSMOM)** — Moskowitz, Ooi & Pedersen (2012):
-
-$$s_t = \text{sign}(r_{t-12m,\,t-1m}) \times \frac{\sigma_{\text{target}}}{\hat{\sigma}_t}$$
-
-Volatility-scaled to target annualised vol of 40%.
-
-**Ornstein-Uhlenbeck Mean Reversion:**
-
-$$\Delta X_t = a + b X_{t-1} + \varepsilon_t$$
-
-Fitted via OLS. Half-life $= \ln(2)/\kappa$ where $\kappa = -\ln(1 + b)$. Positions expressed as a z-score of the deviation from the OU equilibrium.
-
-**VWAP Deviation** (intraday, when minute data available): z-score of close relative to rolling VWAP, using volume-weighted average price.
-
-### IC-Weighted Ensemble
-
-Signals are combined proportionally to their rolling information coefficients (rank correlation with subsequent returns):
-
-$$w_k = \frac{|IC_k|}{\sum_j |IC_j|}$$
-
-This downweights signals whose recent predictive power has degraded.
-
-### Risk Metrics
-
-Full risk profile computed from daily returns and price series:
-
-| Metric | Formula |
-|---|---|
-| Sharpe | $(E[r] - r_f) / \sigma \cdot \sqrt{252}$ |
-| Sortino | $(E[r] - r_f) / \sigma_{\text{downside}} \cdot \sqrt{252}$ |
-| Calmar | Annualised return / Max drawdown |
-| VaR 95% | 5th percentile of historical return distribution |
-| CVaR 95% | Mean of returns below VaR 95% |
-| Omega | $\sum r^+ / \sum |r^-|$ |
+| Module | Weight | Basis |
+|--------|--------|-------|
+| Dispute | 40% | Lanjouw & Schankerman (2001) — citation inverted-U, family size |
+| Invalidation | 35% | Harhoff, Scherer & Vopel (2003); KR IPR base-rate ~10% |
+| Expiry | 25% | IP5 — ~50% of KR patents lapse before year 12 |
+| Trademark | separate | Trademark Act §34 (Korea) — prior-registration similarity |
 
 ---
 
-## Architecture
-
-Chrome Extension Manifest v3. Three separate JS bundles, zero external dependencies at runtime.
-
-```
-src/
-├── background.js          Service worker: pipeline runner, 5-min TTL cache
-├── data/fetcher.js        Yahoo Finance v8 Chart API + URL ticker detection
-├── engine/
-│   ├── math.js            Numerical utilities (logReturns, percentile, etc.)
-│   ├── garch.js           GJR-GARCH MLE + term structure
-│   ├── hmm.js             Baum-Welch HMM + regime forecast
-│   ├── signals.js         TSMOM, OU, VWAP, RSI, ATR, IC-ensemble, Kelly
-│   ├── forecast.js        Multi-timeframe forecast engine
-│   └── risk.js            Full risk metrics
-└── widget/
-    ├── index.js           Content script: inject, SPA nav detection
-    ├── widget.js          Pure-DOM overlay renderer (no React)
-    └── widget.css         Styles scoped under #alpha-nexus-root
-public/
-├── popup.html             Extension popup UI
-└── popup.js              Status, force-refresh, auto-analyse toggle
-```
-
-**Why a service worker?** Yahoo Finance API calls require CORS-safe requests that content scripts cannot make directly. The service worker runs in the extension context and can fetch any permitted host. Results are cached in `chrome.storage.session` with a 5-minute TTL.
-
-**Why pure DOM (no React)?** The content script is injected into third-party pages. Bundling React would increase the payload from ~15 kB to ~150 kB, and React's reconciliation overhead is unnecessary for a widget that updates at most once per page load.
-
-**SPA navigation:** Yahoo Finance is a React SPA. URL changes do not trigger full page reloads. A `MutationObserver` on `document.body` detects URL changes and re-runs ticker detection and analysis automatically.
-
----
-
-## Supported Sites
-
-| Site | URL Pattern |
-|---|---|
-| Yahoo Finance | `finance.yahoo.com/quote/*` |
-| MarketWatch | `marketwatch.com/investing/stock/*` |
-| Google Finance | `google.com/finance/quote/*` |
-
----
-
-## Installation
-
-### From Source
+## Quick Start
 
 ```bash
-git clone git@github.com:dayeon603-pixel/AlphaNexus.git
-cd AlphaNexus
-npm install
-npm run build      # outputs to dist/
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+# Open http://localhost:8000
 ```
 
-Load in Chrome: `chrome://extensions` → **Load unpacked** → select the `dist/` folder.
+### Demo query
 
-### Dependencies
-
-```json
-{
-  "devDependencies": {
-    "webpack": "5.x",
-    "webpack-cli": "5.x",
-    "babel-loader": "9.x",
-    "@babel/preset-env": "7.x",
-    "css-loader": "6.x",
-    "mini-css-extract-plugin": "2.x",
-    "copy-webpack-plugin": "11.x"
-  }
-}
+```bash
+curl -X POST http://localhost:8000/analyze \
+  -d "applicant_name=삼정테크 (주)" \
+  -H "Content-Type: application/x-www-form-urlencoded"
 ```
 
-No runtime dependencies — all quant models are implemented from scratch in vanilla JS.
+Expected: portfolio score ≈ **37.9 / 100**, grade **LOW**.
 
 ---
 
-## Data Source
+## Endpoints
 
-Yahoo Finance v8 Chart API:
-
-```
-GET https://query1.finance.yahoo.com/v8/finance/chart/{ticker}
-    ?interval={1m|1h|1d|1wk|1mo}&range={5d|60d|2y|5y|10y}
-```
-
-Five timeframes fetched per analysis:
-- **Minute** (1m, 5d) — ~1950 bars, intraday signals
-- **Hourly** (1h, 60d) — ~480 bars, short-term forecast
-- **Daily** (1d, 2y) — ~504 bars, core model fitting
-- **Weekly** (1wk, 5y) — ~260 bars, medium-term context
-- **Monthly** (1mo, 10y) — ~120 bars, long-run vol baseline
-
-Minute and hourly data are fetched best-effort; if unavailable (illiquid tickers, weekends), only daily/weekly/monthly forecasts are shown.
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/` | HTML input form |
+| POST | `/analyze` | Form submit → HTML report |
+| GET | `/analyze/json?applicant_name=...` | JSON variant |
+| GET | `/health` | `{"status":"ok"}` |
+| GET | `/info` | Module list, weights, data source |
 
 ---
 
-## Author
+## Mock / Live Switch
 
-Dayeon Kang — quant researcher, developer
+- **Mock (default)**: 6 built-in fixture applicants. No API key needed.
+  Any unknown applicant name falls back to the demo applicant.
+- **Live**: Set `KIPRIS_SERVICE_KEY` env var to your KIPRIS Open API key.
+  The client auto-detects and switches to live mode.
+
+```bash
+export KIPRIS_SERVICE_KEY="your_key_here"
+uvicorn app.main:app
+```
+
+Live mode fetches from `https://plus.kipris.or.kr/kipo-api/kipi/`. Raw KIPRIS
+records are sparse; missing fields are imputed conservatively (population anchors).
+
+---
+
+## Demo Fixture Applicants
+
+| Name | Expected Grade | Notes |
+|------|----------------|-------|
+| 삼정테크 (주) | LOW (~37.9) | 4 patents incl. 1 lapsed |
+| 한국대학교 기술지주 | LOW | Clean university spinout |
+| 넥스테크 코리아 | MED | Mixed portfolio, refusal on TM |
+| 글로벌IP홀딩스 | HIGH | NPE-style, trial history |
+| 구형특허조합 | HIGH | All lapsed/expired |
+| 박민준 (개인) | LOW | Individual inventor |
+
+---
+
+## Running Tests
+
+```bash
+python -m pytest -q
+```
+
+All tests run in mock mode (no API key required). The critical-path test
+`test_demo_portfolio_score_approx_37_9` asserts the calibrated score is within
+[36.5, 39.5].
+
+---
+
+## Validation Harness
+
+```bash
+python validate_retrospective.py
+```
+
+Scores ~30 labeled fixture records (invalidated vs upheld) using pre-trial signals
+only. Prints AUC-ROC, precision, recall, F1 at threshold 50.
+
+**Honest caveat**: The validation set is synthetic (constructed to have separable
+signal profiles). A real production system requires calibration against the KR KIPRIS
+IPR trial database (~8,000 proceedings since 2012). The AUC on these fixtures reflects
+model rank-ordering on designed data, not real-world performance.
+
+---
+
+## Deploy to Render
+
+```bash
+# Push to GitHub, then:
+# 1. New Web Service → connect repo
+# 2. Set KIPRIS_SERVICE_KEY in Environment Variables
+# 3. Deploy
+```
+
+Or use `render.yaml` for Infrastructure-as-Code deployment.
+
+---
+
+## MVP Scope
+
+- Mock data only by default (live needs KIPRIS key + API access approval).
+- Scoring constants (logistic k, anchor values) are tuned on synthetic fixtures.
+  Production calibration requires backtesting against historical KR IP trial outcomes.
+- No authentication, rate limiting, or PII handling — add before any public deployment.
+- Report is informational; not legal advice.
