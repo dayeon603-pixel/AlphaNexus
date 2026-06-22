@@ -37,6 +37,18 @@ _cache = AnalysisCache()
 
 DATA_SOURCE: str = f"KIPRIS ({_kipris_client.mode})"
 
+# In mock mode every result is generated/sample data, not live KIPRIS records.
+# Surface that prominently so nothing is mistaken for real analysis until a
+# KIPRIS_SERVICE_KEY is set (which flips the client to live and hides this).
+_IS_MOCK: bool = _kipris_client.mode == "mock"
+_DEMO_BANNER: str = (
+    '<div class="demo-banner">⚠️ <strong>데모 모드 (Demo mode)</strong> — '
+    '화면의 수치는 출원인명으로부터 생성된 <strong>합성·예시 데이터</strong>이며 '
+    '실제 KIPRIS 검색 결과가 아닙니다. Figures below are <strong>synthetic sample '
+    'data</strong> seeded from the name, not live KIPRIS results. '
+    '<code>KIPRIS_SERVICE_KEY</code>를 설정하면 실데이터로 전환됩니다.</div>'
+) if _IS_MOCK else ""
+
 # ---------------------------------------------------------------------------
 # HTML templates (inline — no Jinja2 dependency)
 # ---------------------------------------------------------------------------
@@ -66,6 +78,8 @@ tr:hover td{background:#f0f4ff}
 input[type=text]{width:100%;padding:10px 14px;font-size:16px;border:1px solid #ced4da;border-radius:6px;box-sizing:border-box;margin-bottom:16px}
 button{background:#0f3460;color:#fff;padding:10px 28px;font-size:16px;border:none;border-radius:6px;cursor:pointer}
 button:hover{background:#16213e}
+.demo-banner{background:#fff3cd;border:1px solid #ffe69c;color:#664d03;border-radius:8px;padding:12px 16px;margin:16px 0;font-size:13px;line-height:1.5}
+.demo-banner strong{color:#7a5b00}
 """
 
 _FORM_HTML = """<!DOCTYPE html>
@@ -75,6 +89,7 @@ _FORM_HTML = """<!DOCTYPE html>
 <body>
 <h1>AlphaNexus</h1>
 <p class="subtitle">IP 포트폴리오 리스크 스크리닝 | Patent & Trademark Risk Analyzer</p>
+{banner}
 <div class="form-card">
   <h2 style="margin-top:0">출원인 분석</h2>
   <form method="post" action="/analyze">
@@ -188,6 +203,7 @@ def _render_report(result: dict[str, Any]) -> str:
 <body>
 <h1>AlphaNexus 분석 결과</h1>
 <p class="subtitle">출원인: <strong>{applicant}</strong></p>
+{_DEMO_BANNER}
 
 <div class="card">
   <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
@@ -249,7 +265,7 @@ def _render_report(result: dict[str, Any]) -> str:
 @app.get("/", response_class=HTMLResponse)
 async def index() -> HTMLResponse:
     """Serve the applicant name input form."""
-    return HTMLResponse(_FORM_HTML.format(css=_CSS))
+    return HTMLResponse(_FORM_HTML.format(css=_CSS, banner=_DEMO_BANNER))
 
 
 @app.post("/analyze", response_class=HTMLResponse)

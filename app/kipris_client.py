@@ -32,7 +32,12 @@ logger = logging.getLogger(__name__)
 # Constants
 # ---------------------------------------------------------------------------
 
-KIPRIS_BASE_URL: str = "https://plus.kipris.or.kr/kipo-api/kipi/"
+# Base URL is overridable via env (KIPRIS_BASE_URL). If the default HTTPS host
+# errors at request time, the client also retries once over HTTP automatically
+# (KIPRIS Plus endpoints are commonly documented over plain HTTP).
+KIPRIS_BASE_URL: str = os.environ.get(
+    "KIPRIS_BASE_URL", "https://plus.kipris.or.kr/kipo-api/kipi/"
+)
 KIPRIS_PATENT_SEARCH_PATH: str = "patUtiModInfoSearchSevice/applicantNameSearchInfo"
 KIPRIS_TM_SEARCH_PATH: str = "trademarkInfoSearchService/applicantNameSearchInfo"
 ENV_KEY_NAME: str = "KIPRIS_SERVICE_KEY"
@@ -48,6 +53,24 @@ def _build_kipris_url(path: str, params: dict[str, str]) -> str:
     """Construct a KIPRIS Open API URL with query parameters."""
     query = _urllib_parse.urlencode(params)
     return f"{KIPRIS_BASE_URL}{path}?{query}"
+
+
+def _urlopen_with_fallback(url: str, timeout: int = 10):
+    """Open ``url``, retrying once over HTTP if the HTTPS request fails.
+
+    KIPRIS Plus endpoints are commonly served/documented over plain HTTP. If the
+    default HTTPS base URL raises (SSL error, redirect loop, connection refused),
+    fall back to HTTP once — so a deploy with a valid key never fails purely on
+    the URL scheme. ``URLError``/``SSLError`` are both subclasses of ``OSError``.
+    """
+    try:
+        return _urllib_request.urlopen(url, timeout=timeout)  # noqa: S310
+    except OSError as exc:
+        if url.startswith("https://"):
+            http_url = "http://" + url[len("https://"):]
+            logger.warning("KIPRIS HTTPS fetch failed (%s); retrying over HTTP", exc)
+            return _urllib_request.urlopen(http_url, timeout=timeout)  # noqa: S310
+        raise
 
 
 def _parse_patent_xml(xml_bytes: bytes) -> list[dict[str, Any]]:
@@ -102,7 +125,7 @@ def _fetch_live_patents(applicant_name: str, service_key: str) -> list[dict[str,
     url = _build_kipris_url(KIPRIS_PATENT_SEARCH_PATH, params)
     logger.info("KIPRIS live fetch: %s", url)
 
-    with _urllib_request.urlopen(url, timeout=10) as resp:  # noqa: S310
+    with _urlopen_with_fallback(url, timeout=10) as resp:
         raw = resp.read()
 
     raw_records = _parse_patent_xml(raw)
@@ -125,7 +148,7 @@ def _fetch_live_trademarks(applicant_name: str, service_key: str) -> list[dict[s
     url = _build_kipris_url(KIPRIS_TM_SEARCH_PATH, params)
     logger.info("KIPRIS TM live fetch: %s", url)
 
-    with _urllib_request.urlopen(url, timeout=10) as resp:  # noqa: S310
+    with _urlopen_with_fallback(url, timeout=10) as resp:
         raw = resp.read()
 
     raw_records = _parse_patent_xml(raw)
