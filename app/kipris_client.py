@@ -24,6 +24,7 @@ except ImportError:
     _URLLIB_AVAILABLE = False
 
 from app.fixtures import FIXTURES, ApplicantFixture
+from app.synthetic import synthesize_applicant
 
 logger = logging.getLogger(__name__)
 
@@ -196,19 +197,23 @@ class KiprisClient:
     # ------------------------------------------------------------------
 
     def _get_mock(self, applicant_name: str) -> ApplicantFixture:
-        """Return fixture data for applicant, falling back to demo applicant."""
+        """Return curated fixture data when available, else a deterministic
+        synthetic portfolio derived from the name.
+
+        Previously, an unknown name relabelled the demo applicant's portfolio,
+        so every unknown company produced the identical score. Now unknown names
+        get a stable, name-seeded synthetic portfolio (still MOCK data, no live
+        call) so distinct inputs produce distinct scores.
+        """
         if applicant_name in FIXTURES:
             logger.debug("Mock hit for applicant '%s'", applicant_name)
             return FIXTURES[applicant_name]
 
-        logger.warning(
-            "Applicant '%s' not in fixtures — using demo applicant '%s'",
+        logger.info(
+            "Applicant '%s' not in fixtures — generating synthetic mock portfolio",
             applicant_name,
-            DEFAULT_MOCK_APPLICANT,
         )
-        fallback = dict(FIXTURES[DEFAULT_MOCK_APPLICANT])
-        fallback["name"] = applicant_name
-        return fallback
+        return synthesize_applicant(applicant_name)
 
     # ------------------------------------------------------------------
     # Live implementation (structural — calls real KIPRIS)
